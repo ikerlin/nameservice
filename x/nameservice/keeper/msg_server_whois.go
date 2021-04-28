@@ -2,64 +2,33 @@ package keeper
 
 import (
 	"context"
-	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/ikerlin/nameservice/x/nameservice/types"
 )
 
-func (k msgServer) CreateWhois(goCtx context.Context, msg *types.MsgCreateWhois) (*types.MsgCreateWhoisResponse, error) {
+func (k msgServer) SetName(goCtx context.Context, msg *types.MsgSetName) (*types.MsgSetNameResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	id := k.AppendWhois(
-		ctx,
-		msg.Creator,
-		msg.Value,
-		msg.Price,
-	)
+	// TODO: Handling the message
+	_ = ctx
 
-	return &types.MsgCreateWhoisResponse{
-		Id: id,
-	}, nil
+	return &types.MsgSetNameResponse{}, nil
 }
 
-func (k msgServer) UpdateWhois(goCtx context.Context, msg *types.MsgUpdateWhois) (*types.MsgUpdateWhoisResponse, error) {
+func (k msgServer) BuyName(goCtx context.Context, msg *types.MsgBuyName) (*types.MsgBuyNameResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	var whois = types.Whois{
-		Creator: msg.Creator,
-		Id:      msg.Id,
-		Value:   msg.Value,
-		Price:   msg.Price,
-	}
+	// TODO: Handling the message
+	_ = ctx
 
-	// Checks that the element exists
-	if !k.HasWhois(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
-	}
-
-	// Checks if the the msg sender is the same as the current owner
-	if msg.Creator != k.GetWhoisOwner(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
-
-	k.SetWhois(ctx, whois)
-
-	return &types.MsgUpdateWhoisResponse{}, nil
+	return &types.MsgBuyNameResponse{}, nil
 }
 
-func (k msgServer) DeleteWhois(goCtx context.Context, msg *types.MsgDeleteWhois) (*types.MsgDeleteWhoisResponse, error) {
+func (k msgServer) DeleteName(goCtx context.Context, msg *types.MsgDeleteName) (*types.MsgDeleteNameResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if !k.HasWhois(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
-	}
-	if msg.Creator != k.GetWhoisOwner(ctx, msg.Id) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
+	// TODO: Handling the message
+	_ = ctx
 
-	k.RemoveWhois(ctx, msg.Id)
-
-	return &types.MsgDeleteWhoisResponse{}, nil
+	return &types.MsgDeleteNameResponse{}, nil
 }

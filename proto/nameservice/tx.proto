@@ -8,34 +8,35 @@ option go_package = "github.com/ikerlin/nameservice/x/nameservice/types";
 // Msg defines the Msg service.
 service Msg {
     // this line is used by starport scaffolding # proto/tx/rpc
-  rpc CreateWhois(MsgCreateWhois) returns (MsgCreateWhoisResponse);
-  rpc UpdateWhois(MsgUpdateWhois) returns (MsgUpdateWhoisResponse);
-  rpc DeleteWhois(MsgDeleteWhois) returns (MsgDeleteWhoisResponse);
+  rpc DeleteName(MsgDeleteName) returns (MsgDeleteNameResponse);
+  rpc BuyName(MsgBuyName) returns (MsgBuyNameResponse);
+  rpc SetName(MsgSetName) returns (MsgSetNameResponse);
 }
 
 // this line is used by starport scaffolding # proto/tx/message
-message MsgCreateWhois {
+message MsgDeleteName {
   string creator = 1;
-  string value = 2;
-  string price = 3;
+  string name = 2;
 }
 
-message MsgCreateWhoisResponse {
-  uint64 id = 1;
+message MsgDeleteNameResponse {
 }
 
-message MsgUpdateWhois {
+message MsgBuyName {
+  string name = 1;
+  string bid = 2;
+  string buyer = 3;
+}
+
+message MsgBuyNameResponse {
+}
+
+message MsgSetName {
   string creator = 1;
-  uint64 id = 2;
+  string name = 2;
   string value = 3;
-  string price = 4;
 }
 
-message MsgUpdateWhoisResponse { }
-
-message MsgDeleteWhois {
-  string creator = 1;
-  uint64 id = 2;
+message MsgSetNameResponse {
 }
 
-message MsgDeleteWhoisResponse { }

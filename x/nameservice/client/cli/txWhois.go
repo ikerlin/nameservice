@@ -1,30 +1,28 @@
 package cli
 
 import (
-	"github.com/spf13/cobra"
-	"strconv"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/ikerlin/nameservice/x/nameservice/types"
+	"github.com/spf13/cobra"
 )
 
-func CmdCreateWhois() *cobra.Command {
+func CmdSetName() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-whois [value] [price]",
-		Short: "Creates a new whois",
+		Use:   "SetName [name] [value]",
+		Short: "Broadcast message SetName",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			argsValue := string(args[0])
-			argsPrice := string(args[1])
+			argsName := string(args[0])
+			argsValue := string(args[1])
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreateWhois(clientCtx.GetFromAddress().String(), string(argsValue), string(argsPrice))
+			msg := types.NewMsgSetName(clientCtx.GetFromAddress().String(), string(argsName), string(argsValue))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -37,26 +35,21 @@ func CmdCreateWhois() *cobra.Command {
 	return cmd
 }
 
-func CmdUpdateWhois() *cobra.Command {
+func CmdBuyName() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-whois [id] [value] [price]",
-		Short: "Update a whois",
+		Use:   "BuyName [name] [bid]",
+		Short: "Broadcast message BuyName",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return err
-			}
-
-			argsValue := string(args[1])
-			argsPrice := string(args[2])
+			argsName := string(args[0])
+			argsBid := string(args[1])
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgUpdateWhois(clientCtx.GetFromAddress().String(), id, string(argsValue), string(argsPrice))
+			msg := types.NewMsgBuyName(string(argsName), string(argsBid), clientCtx.GetFromAddress().String())
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -69,23 +62,20 @@ func CmdUpdateWhois() *cobra.Command {
 	return cmd
 }
 
-func CmdDeleteWhois() *cobra.Command {
+func CmdDeleteName() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete-whois [id] [value] [price]",
-		Short: "Delete a whois by id",
+		Use:   "DeleteName [name]",
+		Short: "Broadcast message DeleteName",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return err
-			}
+			argsName := string(args[0])
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgDeleteWhois(clientCtx.GetFromAddress().String(), id)
+			msg := types.NewMsgDeleteName(clientCtx.GetFromAddress().String(), string(argsName))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
