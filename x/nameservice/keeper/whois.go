@@ -122,6 +122,12 @@ func (k Keeper) MinPrice(ctx sdk.Context) sdk.Coins {
 	return sdk.Coins{sdk.NewInt64Coin("nametoken", 1)}
 }
 
+// DeleteWhois delete the whois by name
+func (k Keeper) DeleteWhois(ctx sdk.Context, name string) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.WhoisKey))
+	store.Delete([]byte(name))
+}
+
 // GetWhoisIDBytes returns the byte representation of the ID
 func GetWhoisIDBytes(id uint64) []byte {
 	bz := make([]byte, 8)

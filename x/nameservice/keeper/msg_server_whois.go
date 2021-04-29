@@ -75,15 +75,20 @@ func (k msgServer) BuyName(goCtx context.Context, msg *types.MsgBuyName) (*types
 	}
 
 	k.SetWhois(ctx, msg.Name, whois)
-
 	return &types.MsgBuyNameResponse{}, nil
 }
 
 func (k msgServer) DeleteName(goCtx context.Context, msg *types.MsgDeleteName) (*types.MsgDeleteNameResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Handling the message
-	_ = ctx
+	if !k.HasWhois(ctx, msg.Name) {
+		return nil, sdkerrors.Wrap(types.ErrNameDoesNotExist, fmt.Sprintf("Name %s doesn't exist", msg.Name))
+	}
 
+	if msg.Creator != k.GetWhoisOwner(ctx, msg.Name) {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "Incorrect Owner")
+	}
+
+	k.DeleteWhois(ctx, msg.Name)
 	return &types.MsgDeleteNameResponse{}, nil
 }
