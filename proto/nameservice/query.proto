@@ -12,7 +12,7 @@ option go_package = "github.com/ikerlin/nameservice/x/nameservice/types";
 service Query {
     // this line is used by starport scaffolding # 2
 	rpc Whois(QueryGetWhoisRequest) returns (QueryGetWhoisResponse) {
-		option (google.api.http).get = "/ikerlin/nameservice/nameservice/whois/{id}";
+		option (google.api.http).get = "/ikerlin/nameservice/nameservice/whois/{name}";
 	}
 	rpc WhoisAll(QueryAllWhoisRequest) returns (QueryAllWhoisResponse) {
 		option (google.api.http).get = "/ikerlin/nameservice/nameservice/whois";
@@ -22,7 +22,7 @@ service Query {
 
 // this line is used by starport scaffolding # 3
 message QueryGetWhoisRequest {
-	uint64 id = 1;
+	string name = 1;
 }
 
 message QueryGetWhoisResponse {

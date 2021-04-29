@@ -2,8 +2,6 @@ package cli
 
 import (
 	"context"
-	"strconv"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/ikerlin/nameservice/x/nameservice/types"
@@ -44,23 +42,16 @@ func CmdListWhois() *cobra.Command {
 
 func CmdShowWhois() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-whois [id]",
+		Use:   "show-whois [name]",
 		Short: "shows a whois",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
-
 			queryClient := types.NewQueryClient(clientCtx)
 
-			id, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return err
-			}
-
 			params := &types.QueryGetWhoisRequest{
-				Id: id,
+				Name: args[0],
 			}
-
 			res, err := queryClient.Whois(context.Background(), params)
 			if err != nil {
 				return err

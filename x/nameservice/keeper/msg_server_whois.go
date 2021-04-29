@@ -71,6 +71,7 @@ func (k msgServer) BuyName(goCtx context.Context, msg *types.MsgBuyName) (*types
 		whois = types.Whois{
 			Creator: msg.Buyer,
 			Price:   msg.Bid,
+			Name:    msg.Name,
 		}
 	}
 
