@@ -78,9 +78,9 @@ func (k Keeper) GetWhois(ctx sdk.Context, name string) types.Whois {
 }
 
 // HasWhois checks if the whois exists in the store
-func (k Keeper) HasWhois(ctx sdk.Context, id uint64) bool {
+func (k Keeper) HasWhois(ctx sdk.Context, name string) bool {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.WhoisKey))
-	return store.Has(GetWhoisIDBytes(id))
+	return store.Has([]byte(name))
 }
 
 // GetWhoisOwner returns the creator of the whois
@@ -115,6 +115,11 @@ func (k Keeper) SetNameValue(ctx sdk.Context, name string, value string) {
 	whois := k.GetWhois(ctx, name)
 	whois.Value = value
 	k.SetWhois(ctx, name, whois)
+}
+
+// MinPrice TODO: need best mode
+func (k Keeper) MinPrice(ctx sdk.Context) sdk.Coins {
+	return sdk.Coins{sdk.NewInt64Coin("nametoken", 1)}
 }
 
 // GetWhoisIDBytes returns the byte representation of the ID
