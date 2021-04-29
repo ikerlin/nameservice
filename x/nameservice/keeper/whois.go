@@ -63,17 +63,17 @@ func (k Keeper) AppendWhois(
 }
 
 // SetWhois set a specific whois in the store
-func (k Keeper) SetWhois(ctx sdk.Context, whois types.Whois) {
+func (k Keeper) SetWhois(ctx sdk.Context, name string, whois types.Whois) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.WhoisKey))
 	b := k.cdc.MustMarshalBinaryBare(&whois)
-	store.Set(GetWhoisIDBytes(whois.Id), b)
+	store.Set([]byte(name), b)
 }
 
 // GetWhois returns a whois from its id
-func (k Keeper) GetWhois(ctx sdk.Context, id uint64) types.Whois {
+func (k Keeper) GetWhois(ctx sdk.Context, name string) types.Whois {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.WhoisKey))
 	var whois types.Whois
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetWhoisIDBytes(id)), &whois)
+	k.cdc.MustUnmarshalBinaryBare(store.Get([]byte(name)), &whois)
 	return whois
 }
 
@@ -84,8 +84,8 @@ func (k Keeper) HasWhois(ctx sdk.Context, id uint64) bool {
 }
 
 // GetWhoisOwner returns the creator of the whois
-func (k Keeper) GetWhoisOwner(ctx sdk.Context, id uint64) string {
-	return k.GetWhois(ctx, id).Creator
+func (k Keeper) GetWhoisOwner(ctx sdk.Context, name string) string {
+	return k.GetWhois(ctx, name).Creator
 }
 
 // RemoveWhois removes a whois from the store
@@ -108,6 +108,13 @@ func (k Keeper) GetAllWhois(ctx sdk.Context) (list []types.Whois) {
 	}
 
 	return
+}
+
+// SetNameValue set name's value
+func (k Keeper) SetNameValue(ctx sdk.Context, name string, value string) {
+	whois := k.GetWhois(ctx, name)
+	whois.Value = value
+	k.SetWhois(ctx, name, whois)
 }
 
 // GetWhoisIDBytes returns the byte representation of the ID
