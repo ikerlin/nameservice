@@ -1,27 +1,24 @@
 package rest
 
 import (
-	"net/http"
-	"strconv"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/gorilla/mux"
 	"github.com/ikerlin/nameservice/x/nameservice/types"
+	"net/http"
 )
 
-type createWhoisRequest struct {
+type setNameRequest struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 	Creator string       `json:"creator"`
+	Name    string       `json:"name"`
 	Value   string       `json:"value"`
-	Price   string       `json:"price"`
 }
 
-func createWhoisHandler(clientCtx client.Context) http.HandlerFunc {
+func setNameHandler(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req createWhoisRequest
+		var req setNameRequest
 		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
@@ -38,35 +35,25 @@ func createWhoisHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		parsedValue := req.Value
-
-		parsedPrice := req.Price
-
-		msg := types.NewMsgCreateWhois(
+		msg := types.NewMsgSetName(
 			req.Creator,
-			parsedValue,
-			parsedPrice,
+			req.Name,
+			req.Value,
 		)
-
 		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
 	}
 }
 
-type updateWhoisRequest struct {
+type buyNameRequest struct {
 	BaseReq rest.BaseReq `json:"base_req"`
-	Creator string       `json:"creator"`
-	Value   string       `json:"value"`
-	Price   string       `json:"price"`
+	Name    string       `json:"name"`
+	Bid     string       `json:"bid"`
+	Buyer   string       `json:"buyer"`
 }
 
-func updateWhoisHandler(clientCtx client.Context) http.HandlerFunc {
+func buyNameHandler(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id, err := strconv.ParseUint(mux.Vars(r)["id"], 10, 64)
-		if err != nil {
-			return
-		}
-
-		var req updateWhoisRequest
+		var req buyNameRequest
 		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
@@ -77,40 +64,30 @@ func updateWhoisHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		_, err = sdk.AccAddressFromBech32(req.Creator)
+		_, err := sdk.AccAddressFromBech32(req.Buyer)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		parsedValue := req.Value
-
-		parsedPrice := req.Price
-
-		msg := types.NewMsgUpdateWhois(
-			req.Creator,
-			id,
-			parsedValue,
-			parsedPrice,
+		msg := types.NewMsgBuyName(
+			req.Name,
+			req.Bid,
+			req.Buyer,
 		)
-
 		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
 	}
 }
 
-type deleteWhoisRequest struct {
+type deleteNameRequest struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 	Creator string       `json:"creator"`
+	Name    string       `json:"name"`
 }
 
-func deleteWhoisHandler(clientCtx client.Context) http.HandlerFunc {
+func deleteNameHandler(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id, err := strconv.ParseUint(mux.Vars(r)["id"], 10, 64)
-		if err != nil {
-			return
-		}
-
-		var req deleteWhoisRequest
+		var req deleteNameRequest
 		if !rest.ReadRESTReq(w, r, clientCtx.LegacyAmino, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
@@ -121,17 +98,16 @@ func deleteWhoisHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		_, err = sdk.AccAddressFromBech32(req.Creator)
+		_, err := sdk.AccAddressFromBech32(req.Creator)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		msg := types.NewMsgDeleteWhois(
+		msg := types.NewMsgDeleteName(
 			req.Creator,
-			id,
+			req.Name,
 		)
-
 		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)
 	}
 }
