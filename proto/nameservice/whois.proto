@@ -10,4 +10,5 @@ message Whois {
   uint64 id = 2;
   string value = 3; 
   string price = 4; 
+  string name = 5;
 }
